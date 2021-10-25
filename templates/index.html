@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html>
+ <head>
+  <title>Insurance Policies</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" />
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+
+  <style>
+    table tr:not(:first-child){
+        cursor: pointer;transition: all .25s ease-in-out;
+    }
+    table tr:not(:first-child):hover{background-color: #ddd;}
+    </style>
+
+
+ </head>
+ <body>
+  <div class="container">
+   <div class="table-responsive">
+    <h1 align="center">Insurance Policies</h1>
+    <br />
+    <div align="center">
+     <button type="button" name="load_data" id="load_data" class="btn btn-info">Load Data</button>
+
+     <button type="button" name="graph" id="graph" class="btn btn-info"> <a href='/graph'>Graph</a></button>
+
+     <!-- <button type="button" class="btn btn-info btn-lg" data-toggle="modal" data-target="#myModal">Edit</button>
+     -->
+     <!-- Modal -->
+     <div class="modal fade" id="myModal" role="dialog">
+       <div class="modal-dialog">
+       
+         <!-- Modal content-->
+         <div class="modal-content">
+           <div class="modal-header">
+             <button type="button" class="close" data-dismiss="modal">&times;</button>
+             <h4 class="modal-title">Edit Policy Details</h4>
+           </div>
+           <div class="modal-body">
+            
+                <form role="form" method="POST" action="">
+                    <input type="hidden" name="_token" value="">
+                    <div class="form-group">
+                        <label class="control-label">Policy ID</label>
+                        <div>
+                            <input type="number" class="form-control input-lg" name="policy_id" value="">
+                        </div>
+                        
+                        <label class="control-label">Date of Purchase</label>
+                        <div>
+                            <input type="date" class="form-control input-lg" name="dop" value="">
+                        </div>
+
+                        <label class="control-label">Customer ID</label>
+                        <div>
+                            <input type="number" class="form-control input-lg" name="customer_id" value="">
+                        </div>
+
+                        <label class="control-label">Fuel</label>
+                        <div>
+                            <input type="String" class="form-control input-lg" name="fuel" value="">
+                        </div>
+
+                        <label class="control-label">Vehicle Segment</label>
+                        <div>
+                            <input type="String" class="form-control input-lg" name="vehicle_segment" value="">
+                        </div> 
+
+                        <label class="control-label">Premium</label>
+                        <div>
+                            <input type="number" class="form-control input-lg" name="premium" value="">
+                        </div> 
+
+                        <label class="control-label">Bodily Injury Liability</label>
+                        <div>
+                            <input type="number" class="form-control input-lg" name="bodily_injury_liability" value="">
+                        </div> 
+
+                        <label class="control-label">Personal Injury Protection</label>
+                        <div>
+                            <input type="number" class="form-control input-lg" name="personal_injury_protection" value="">
+                        </div> 
+
+                        <label class="control-label">Property Damage Liability</label>
+                        <div>
+                            <input type="number" class="form-control input-lg" name="property_damage_liablity" value="">
+                        </div> 
+
+                        <label class="control-label">Collision</label>
+                        <div>
+                            <input type="number" class="form-control input-lg" name="collision" value="">
+                        </div> 
+
+                        <label class="control-label">Comprehensive</label>
+                        <div>
+                            <input type="number" class="form-control input-lg" name="comprehensive" value="">
+                        </div>
+                        
+                        <label class="control-label">Customer_Gender</label>
+                        <div>
+                            <input type="String" class="form-control input-lg" name="customer_gender" value="">
+                        </div>
+
+                        <label class="control-label">Customer Income Group</label>
+                        <div>
+                            <input type="String" class="form-control input-lg" name="customer_income_group" value="">
+                        </div>
+
+                        <label class="control-label">Customer Region</label>
+                        <div>
+                            <input type="String" class="form-control input-lg" name="customer_region" value="">
+                        </div>
+
+                        <label class="control-label">Customer Marital Status</label>
+                        <div>
+                            <input type="number" class="form-control input-lg" name="customer_marital_status" value="">
+                        </div>
+
+
+                    </div>
+                    
+           
+           <div class="modal-footer">
+             <button type="button" class="btn btn-default" id="edit_save" data-dismiss="modal">Save</button>  
+             <button type="button" class="btn btn-default" id="edit_close" data-dismiss="modal">Close</button>
+           </div>
+         </div>
+         
+       </div>
+     </div>
+     
+
+
+    </div>
+
+    <br />
+    
+    <input type="text" id="psearch" style="width: 100%; height:30px; margin-top:10px; margin-bottom:10px " size='30'
+    onkeyup="psearchFunction()" placeholder="Search the policy id" title="Type in a policy id">
+    <div id="policy_table">
+    </div>
+   </div>
+  </div>
+
+
+
+  
+ </body>
+</html>
+
+<script>
+$(document).ready(function(){
+ $('#load_data').click(function(){
+  $.ajax({
+   url:"static/Data Set - Insurance Client.csv",
+   dataType:"text",
+   success:function(data)
+   {
+    var policy_data = data.split(/\r?\n|\r/);
+    var table_data = '<table class="table table-bordered table-striped">';
+    for(var count = 0; count<policy_data.length; count++)
+    {
+     var cell_data = policy_data[count].split(",");
+    table_data += '<tr onclick="editRow()">';
+  
+    
+     for(var cell_count=0; cell_count<cell_data.length; cell_count++)
+     {
+        table_data += '<td>'+cell_data[cell_count]+'</td>';
+        
+    
+     }
+     table_data += '</tr>';
+    }
+    table_data += '</table>';
+    $('#policy_table').html(table_data);
+   }
+  });
+ });
+ 
+ 
+
+});
+
+function psearchFunction(){
+    var filter = document.getElementById('psearch');
+    var myTable = document.getElementById('policy_table');
+
+    var tr= myTable.getElementsByTagName('tr');
+
+    for(var i = 0; i < tr.length; i++){
+        var td = tr[i].getElementsByTagName('td')[0];
+
+        if(td){
+            var tv = td.textContent || td.innerHTML;
+
+            if(tv.indexOf(filter.value) > -1){
+                tr[i].style.display = "";
+            }
+            else{
+                tr[i].style.display = "none";
+            }
+        }
+    }
+}
+
+var policy_id;
+var date_of_purchase;
+var customer_id;
+var fuel;
+var vehicle_segment;
+var premium;
+var bodily_injury_liability;
+var personal_injury_protection;
+var property_damage_liablity;
+var collision;
+var comprehensive;
+var customer_gender;
+var customer_income_group;
+var customer_region;
+var customer_marital_status;
+
+function editRow()
+            {
+              
+            document.getElementById('policy_table')
+            .addEventListener('click', function (item) {
+                
+                var row = item.path[1];
+  
+                var row_value = [];
+  
+                for (var j = 0; j < row.cells.length; j++) {
+  
+                    row_value.push(row.cells[j].innerHTML) ;
+                    
+                }
+               
+                
+                alert(row_value);
+                alert("Sorry ! Date of Purchase cannot be change");
+                alert("Premium value cannot exceed 1 million");
+  
+                if (row.classList.contains('highlight'))
+                    row.classList.remove('highlight');
+                else
+                    row.classList.add('highlight');
+            });
+                
+            }
+
+
+</script>
